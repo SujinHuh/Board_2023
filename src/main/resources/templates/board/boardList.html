@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <meta charset="UTF-8">
     <h1>board List</h1>
-    <form method="post" action="/boardList">
+    <form method="post" action="/addBoard">
         <input type="text" name="boardList"/>
         <input type="submit" name="boardList"/>
     </form>
-</head>
-<body>
-
-</body>
+<hr>
+    <ul>
+        <li th:each="boardList : ${boardList}">
+            <span th:text="${boardList}"></span>
+        </li>
+    </ul>
 </html>
