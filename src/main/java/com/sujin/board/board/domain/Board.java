@@ -8,11 +8,15 @@ import lombok.*;
 @AllArgsConstructor // 자동으로 생성자
 @NoArgsConstructor // 아무것도 없는 생성자
 @Getter @Setter
+@ToString
 public class Board {
 
     @Id //primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동 증가 값.
     private Long id;
-    @NonNull
-    private String boardId;
+    //@NonNull
+    private String title;
+    private String content;
+    private String createDate;
+
 }
