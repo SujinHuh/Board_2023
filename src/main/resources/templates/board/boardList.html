@@ -4,51 +4,59 @@
     <meta charset="UTF-8">
     <h1>List</h1>
     <hr>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <ul id="boardArea">
     <h3 th:each="boardList : ${boardLists}">
-        <span th:text="${boardList.title}"></span>
+        <span class="board-title" th:text="${boardList.title}"></span>
         <span th:text="${boardList.content}"></span>
     </h3>
 </ul>
 
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="boardModal" tabindex="-1" role="dialog" aria-labelledby="boardModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="boardModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="boardContent"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     let boardArea = document.getElementById('boardArea');
-    let page = 1;
-    let isLoading = false;
 
-    // 스크롤 이벤트 리스너 등록
-    window.addEventListener('scroll', function() {
-        if (isLoading) return;
-        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        let windowHeight = window.innerHeight;
-        let documentHeight = document.documentElement.scrollHeight;
-        if (scrollTop + windowHeight >= documentHeight - 100) {
-            loadMoreData();
+    // 클릭 이벤트 리스너 등록
+    boardArea.addEventListener('click', function(event) {
+        let target = event.target;
+        if (target.classList.contains('board-title')) {
+            let title = target.textContent;
+            let content = target.nextElementSibling.textContent;
+            showBoardModal(title, content);
         }
     });
 
-    // 데이터 추가 로드
-    function loadMoreData() {
-        isLoading = true;
-        axios.get('/loadMore?page=' + page)
-            .then(function(response) {
-                let boardLists = response.data.boardLists;
-                if (boardLists.length > 0) {
-                    boardLists.forEach(function(board) {
-                        let tag = `<h3><span>${board.title}</span><span>${board.content}</span></h3>`;
-                        boardArea.insertAdjacentHTML('beforeend', tag);
-                    });
-                    page++;
-                }
-                isLoading = false;
-            })
-            .catch(function(error) {
-                console.log(error);
-                isLoading = false;
-            });
+    // 모달 창 보여주기
+    function showBoardModal(title, content) {
+        let boardModal = document.getElementById('boardModal');
+        let modalTitle = document.getElementById('boardModalLabel');
+        let modalContent = document.getElementById('boardContent');
+        modalTitle.textContent = title;
+        modalContent.textContent = content;
+        $(boardModal).modal('show');
     }
 </script>
 </body>

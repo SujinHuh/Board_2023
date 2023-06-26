@@ -3,9 +3,6 @@ package com.sujin.board.board.action;
 import com.sujin.board.board.domain.Board;
 import com.sujin.board.board.repository.BoardRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +27,10 @@ public class BoardAction {
      * @return
      **********************************/
     @GetMapping("/boardList")
-    public String boardList(Model model){
+    public String boardList(Model model) {
         List<Board> boardLists = boardRepository.findAll();
         model.addAttribute("boardLists", boardLists);
-        System.out.println(">>>>> "+boardLists);
+        System.out.println(">>>>> " + boardLists);
         return "board/boardList";
     }
 
@@ -47,6 +44,24 @@ public class BoardAction {
 
         return "board/boardList";
     }
+
+    // @ResponseBody - ResourceEntity
+    @PostMapping("/addBoard")
+    @ResponseBody
+    public Board addBoard(@RequestBody Board board) {
+        //DB저장
+        boardRepository.save(board);// 2. boardLsit 저장
+        System.out.println(board.toString());
+
+        return board;
+    }
+
+    @GetMapping("/addBoard")
+    public String addBoard() {
+        return "addBoard";
+    }
+
+
 
     // 페이지 번호에 따른 데이터를 가져오는 메소드 (가상의 데이터 생성)
     private List<Board> getBoardListsByPage(int page) {
@@ -67,24 +82,6 @@ public class BoardAction {
 
         return boardLists;
     }
-
-
-
-    // @ResponseBody - ResourceEntity
-    @PostMapping("/addBoard")
-    @ResponseBody public Board addBoard(@RequestBody Board board){
-        //DB저장
-        boardRepository.save(board);// 2. boardLsit 저장
-        System.out.println(board.toString());
-
-        return board;
-    }
-
-    @GetMapping("/addBoard")
-    public String addBoard(){
-        return "/board/AddBoard";
-    }
-
 
 }
 

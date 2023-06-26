@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <h1>List</h1>
+    <hr>
+</head>
+<body>
+<ul id="boardArea">
+    <h3 th:each="boardList : ${boardLists}">
+        <span class="board-title" th:text="${boardList.title}"></span>
+        <span th:text="${boardList.content}"></span>
+    </h3>
+</ul>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    let boardArea = document.getElementById('boardArea');
+    let page = 1;
+    let isLoading = false;
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', function() {
+        if (isLoading) return;
+        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        let windowHeight = window.innerHeight;
+        let documentHeight = document.documentElement.scrollHeight;
+        if (scrollTop + windowHeight >= documentHeight - 100) {
+            loadMoreData();
+        }
+    });
+
+    // 데이터 추가 로드
+    function loadMoreData() {
+        isLoading = true;
+        axios.get('/loadMore?page=' + page)
+            .then(function(response) {
+                let boardLists = response.data.boardLists;
+                if (boardLists.length > 0) {
+                    boardLists.forEach(function(board) {
+                        let tag = `<h3><span>${board.title}</span><span>${board.content}</span></h3>`;
+                        boardArea.insertAdjacentHTML('beforeend', tag);
+                    });
+                    page++;
+                }
+                isLoading = false;
+            })
+            .catch(function(error) {
+                console.log(error);
+                isLoading = false;
+            });
+    }
+</script>
+</body>
+</html>
