@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
-<html>
-<h1>board List</h1>
-<input type="text" id="boardTitle" />
-<input type="text" id="boardContent" />
-<input type="button" value="SAVE" id="addBtn" />
-</html>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    let addBtn = document.getElementById("addBtn");
-    let boardTitle = document.getElementById("boardTitle");
-    let boardContent = document.getElementById("boardContent");
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>board List</h1>
+    <input type="text" id="boardTitle" />
+    <input type="text" id="boardContent" />
+    <input type="button" value="SAVE" id="addBtn" />
 
-    // 버튼 클릭 이벤트 핸들러
-    addBtn.addEventListener("click", function () {
-        addBoard();
-    });
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        let addBtn = document.getElementById("addBtn");
+        let boardTitle = document.getElementById("boardTitle");
+        let boardContent = document.getElementById("boardContent");
 
-    // 엔터 키 이벤트 핸들러
-    document.addEventListener("keydown", function (event) {
-        if (event.keyCode === 13) {
+        // 버튼 클릭 이벤트 핸들러
+        addBtn.addEventListener("click", function () {
             addBoard();
-        }
-    });
+        });
 
-    function addBoard() {
-        let param = { title: boardTitle.value, content: boardContent.value }; // 객체
-        axios.post("/addBoard", param)
-            .then(function (response) {
-                if (response != null) {
-                    alert("success");
-                    location.href = "/boardList";
-                }
-                console.log(response);
-            });
-    }
-</script>
+        // 엔터 키 이벤트 핸들러
+        document.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                addBoard();
+            }
+        });
+        function addBoard() {
+            let param = { title: boardTitle.value, content: boardContent.value }; // 객체
+            axios.post("/addBoard", param)
+                .then(function (response) {
+                    if (response != null) {
+                        alert("success");
+                        location.href = "/boardList";
+                    }
+                    console.log(response);
+                });
+        }
+    </script>
+
+</body>
+</html>

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @AllArgsConstructor//repository값 자동 할당
@@ -33,7 +34,15 @@ public class BoardAction {
         System.out.println(">>>>> " + boardLists);
         return "board/boardList";
     }
-
+    /**
+    *
+    * BoardAction
+    *
+    * @author sujin
+    * @version 1.0.0
+    * @dtae 2023-06-27
+    *
+    **/
     @GetMapping("/loadMore")
     public String pageLoad(@RequestParam("page") int page, Model model) {
         // 해당 페이지 번호에 해당하는 데이터를 가져와서 boardLists에 담는다.
@@ -61,7 +70,20 @@ public class BoardAction {
         return "addBoard";
     }
 
+    // 모달창으로 boardView - 페이지 이동
+    @GetMapping("/board/view/{id}")
+    public String view() {
+        return "board/boardList";
+    }
 
+    @PostMapping("/board/view/{id}")
+    @ResponseBody
+    public Optional<Board> view(@PathVariable Long id ) {
+        // null체크
+        Optional<Board> boardList = boardRepository.findById(id);
+
+        return boardList;
+    }
 
     // 페이지 번호에 따른 데이터를 가져오는 메소드 (가상의 데이터 생성)
     private List<Board> getBoardListsByPage(int page) {
