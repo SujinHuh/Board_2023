@@ -67,7 +67,7 @@ public class BoardAction {
 
     @GetMapping("/addBoard")
     public String addBoard() {
-        return "addBoard";
+        return "/board/addBoard";
     }
 
     // 모달창으로 boardView - 페이지 이동

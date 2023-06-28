@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>BoardList</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
+    <body>
+    <hr>
+    <h3>boardList</h3>
+    <p></p>
+    <button style="float: right;" onclick="location.href='/addBoard'">AddBoard</button >
+    <p></p><p></p>
+    <hr>
     <ul id="boardArea">
         <h3 th:each="boardList : ${boardLists}">
             <span class="board-title" th:text="${boardList.title}" th:attr="data-id=${boardList.id}"></span>
         </h3>
     </ul>
-
     <!-- Bootstrap Modal -->
     <div class="modal fade" id="boardModal" tabindex="-1" role="dialog" aria-labelledby="boardModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -24,55 +29,68 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p id="boardContent"></p>
+                    <div class="row">
+                        <div class="col">
+                            <p id="boardContent"></p>
+                        </div>
+                        <div class="col">
+                            <p id="boardComment"></p>
+                            <h3>boardComment</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        let boardArea = document.getElementById('boardArea');
+            <script>
+                let boardArea = document.getElementById('boardArea');
 
-        // 클릭 이벤트 리스너 등록
-        boardArea.addEventListener('click', function(event) {
+                // 클릭 이벤트 리스너 등록
+                boardArea.addEventListener('click', function(event) {
 
-            // axios 비동기 통신
-            // 0. 제목을 클릭
-            // 1. 제목의 id값을 찾기, contet조회하기.
-            let target = event.target;
-            let id = target.dataset.id;
-            console.log(id)
-            axios.post(`/board/view/${id}`)
-                .then((res) => {
-                    console.log(res);
+                    // axios 비동기 통신
+                    // 0. 제목을 클릭
+                    // 1. 제목의 id값을 찾기, contet조회하기.
+                    let target = event.target;
+                    let id = target.dataset.id;
+                    console.log(id)
+                    axios.post(`/board/view/${id}`)
+                        .then((res) => {
+                            console.log(res);
 
-                    // 게시글정보는 res에있으니까
-                    // 그걸 이제 모달에 넣어주면되겠지.
-                    showBoardModal(res.data.title,res.data.content);
+                            // 게시글정보는 res에있으니까
+                            // 그걸 이제 모달에 넣어주면되겠지.
+                            showBoardModal(res.data.title,res.data.content);
+                        });
+                    // if (target.classList.contains('board-title')) {
+                    //     let title = target.textContent;
+                    //     // let content = target.textContent.textContent;
+                    //     console.log(">>>>>>>>>>>>>>")
+                    //     // console.log(title,content)
+                    //     let content = target.nextElementSibling.textContent;
+                    //     showBoardModal(title, content);
+                    // }
                 });
-            // if (target.classList.contains('board-title')) {
-            //     let title = target.textContent;
-            //     // let content = target.textContent.textContent;
-            //     console.log(">>>>>>>>>>>>>>")
-            //     // console.log(title,content)
-            //     let content = target.nextElementSibling.textContent;
-            //     showBoardModal(title, content);
-            // }
-        });
 
-        // 모달 창 보여주기
-        function showBoardModal(title, content) {
-            let boardModal = document.getElementById('boardModal');
-            let modalTitle = document.getElementById('boardModalLabel');
-            let modalContent = document.getElementById('boardContent');
-            modalTitle.textContent = title;
-            modalContent.textContent = content;
-            $(boardModal).modal('show');
-        }
-    </script>
-</body>
+                // 모달 창 보여주기
+                function showBoardModal(title, content) {
+                    let boardModal = document.getElementById('boardModal');
+                    let modalTitle = document.getElementById('boardModalLabel');
+                    let modalContent = document.getElementById('boardContent');
+                    modalTitle.textContent = title;
+                    modalContent.textContent = content;
+                    $(boardModal).modal('show');
+                }
+            </script>
+    </body>
 </html>
+
+
+
