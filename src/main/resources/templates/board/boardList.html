@@ -34,8 +34,12 @@
                             <p id="boardContent"></p>
                         </div>
                         <div class="col">
-                            <p id="boardComment"></p>
                             <h3>boardComment</h3>
+                            <div>
+                                <p id="boardComment"></p>
+                                <textarea id="commentInput" rows="3" cols="30" placeholder="댓글을 입력하세요"></textarea>
+                                <button id="commentSubmit">등록</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,6 +55,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
             <script>
                 let boardArea = document.getElementById('boardArea');
+                let commentInput = document.getElementById('commentInput');
+                let commentSubmit = document.getElementById('commentSubmit');
+                let boardComment = document.getElementById('boardComment');
 
                 // 클릭 이벤트 리스너 등록
                 boardArea.addEventListener('click', function(event) {
@@ -88,6 +95,49 @@
                     modalContent.textContent = content;
                     $(boardModal).modal('show');
                 }
+
+                //댓글 이벤트
+
+                //댓글 창 클릭 이벤트 핸들러
+                commentSubmit.addEventListener('click', function() {
+                    saveComment();
+                });
+
+                //댓글 엔터 키 이벤트 핸들러
+                commentSubmit.addEventListener("keydown", function (event) {
+                    if (event.keyCode === 13) {
+                        saveComment();
+                    }
+                });
+
+                function saveComment(){
+                    let param = {comment: commentInput.value}// 객체
+                    console.log(param);
+                    axios.post("/addComment",param)
+                        .then(function (res){
+                            if(res != null ) {
+                                console.log(res);
+                                console.log(res.data);
+                                console.log(res.data.content);
+
+                                alert("success");
+
+                                location.href = window.location.href; // 현재 페이지의 URL로 이동
+                                boardComment.textContent = param;
+
+                                commentInput.value = '';
+                            }
+                        });
+                }
+
+
+                // //댓글 창 입력
+                // commentSubmit.addEventListener('click', function() {
+                //     let comment = commentInput.value;
+                //     boardComment.textContent = comment;
+                //     commentInput.value = '';
+                // });
+
             </script>
     </body>
 </html>
