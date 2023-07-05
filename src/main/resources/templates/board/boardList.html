@@ -37,7 +37,7 @@
                             <h3>boardComment</h3>
                             <div>
                                 <p id="boardComment"></p>
-                                <textarea id="commentInput" rows="3" cols="30" placeholder="댓글을 입력하세요"></textarea>
+                                <textarea id="comment" rows="3" cols="30" placeholder="댓글을 입력하세요"></textarea>
                                 <button id="commentBtn">등록</button>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
             <script>
                 let boardArea = document.getElementById('boardArea');
-                let commentInput = document.getElementById('commentInput');
+                let comment = document.getElementById('comment');
                 let commentBtn = document.getElementById('commentBtn');
                 let boardComment = document.getElementById('boardComment');
 
@@ -111,32 +111,26 @@
                 });
 
                 function saveComment(){
-                    let param = {comment: commentInput.value}// 객체
-                    console.log(param);
+                    let param = {content: comment.value}// 객체
+                    console.log("param>>>>" + param);
                     axios.post("/addComment",param)
                         .then(function (res){
                             if(res != null ) {
-                                console.log(res);
+                                console.log("res >>> " + res);
                                 console.log(res.data);
                                 console.log(res.data.content);
 
                                 alert("success");
 
                                 // location.href = window.location.href; // 현재 페이지의 URL로 이동
-                                boardComment.textContent = param;
+                                boardComment.textContent = param.content;
 
-                                commentInput.value = '';
+                                comment.value = '';
+                                console.log(res);
                             }
                         });
                 }
 
-
-                // //댓글 창 입력
-                // commentSubmit.addEventListener('click', function() {
-                //     let comment = commentInput.value;
-                //     boardComment.textContent = comment;
-                //     commentInput.value = '';
-                // });
 
             </script>
     </body>
