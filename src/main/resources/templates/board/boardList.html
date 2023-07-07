@@ -96,19 +96,14 @@
                     $(boardModal).modal('show');
                 }
 
-                //댓글 이벤트
-
-                //댓글 창 클릭 이벤트 핸들러
-                commentBtn.addEventListener('click', function() {
-                    saveComment();
-                });
-
-                //댓글 엔터 키 이벤트 핸들러
-                document.addEventListener("keydown", function (event) {
+                // 댓글 창 클릭 이벤트 핸들러 및 댓글 엔터 키 이벤트 핸들러
+                commentBtn.addEventListener('click', saveComment);
+                document.addEventListener("keydown", function(event) {
                     if (event.keyCode === 13) {
                         saveComment();
                     }
                 });
+
 
                 function saveComment(){
                     let param = {content: comment.value}// 객체
