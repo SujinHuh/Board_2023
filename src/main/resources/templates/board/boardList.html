@@ -58,6 +58,7 @@
                 let comment = document.getElementById('comment');
                 let commentBtn = document.getElementById('commentBtn');
                 let boardComment = document.getElementById('boardComment');
+                let currentBoardId ;
 
                 // 클릭 이벤트 리스너 등록
                 boardArea.addEventListener('click', function(event) {
@@ -66,9 +67,9 @@
                     // 0. 제목을 클릭
                     // 1. 제목의 id값을 찾기, contet조회하기.
                     let target = event.target;
-                    let id = target.dataset.id;
-                    console.log(id)
-                    axios.post(`/board/view/${id}`)
+                    currentBoardId = target.dataset.id;
+                    console.log(currentBoardId)
+                    axios.post(`/board/view/${currentBoardId}`)
                         .then((res) => {
                             console.log(res);
 
@@ -106,7 +107,7 @@
 
 
                 function saveComment(){
-                    let param = {content: comment.value}// 객체
+                    let param = {content: comment.value, board : {id : currentBoardId}}// 객체
                     console.log("param>>>>" + param);
                     axios.post("/addComment",param)
                         .then(function (res){

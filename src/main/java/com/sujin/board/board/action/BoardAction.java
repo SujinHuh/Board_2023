@@ -34,6 +34,8 @@ public class BoardAction {
         System.out.println(">>>>> " + boardLists);
         return "board/boardList";
     }
+
+
     /**
     *
     * BoardAction
@@ -78,11 +80,13 @@ public class BoardAction {
 
     @PostMapping("/board/view/{id}")
     @ResponseBody
-    public Optional<Board> view(@PathVariable Long id ) {
+    public Board view(@PathVariable Long id ) {
         // null체크
+        Long board_id = id;
         Optional<Board> boardList = boardRepository.findById(id);
+        //  board부를때 commentList도 불려줘야함.
 
-        return boardList;
+        return boardList.orElse(null);
     }
 
     // 페이지 번호에 따른 데이터를 가져오는 메소드 (가상의 데이터 생성)
