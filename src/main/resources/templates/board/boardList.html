@@ -75,7 +75,7 @@
 
                             // 게시글정보는 res에있으니까
                             // 그걸 이제 모달에 넣어주면되겠지.
-                            showBoardModal(res.data.title,res.data.content);
+                            showBoardModal(res.data.title,res.data.content,res.data.comment);
                         });
                     // if (target.classList.contains('board-title')) {
                     //     let title = target.textContent;
@@ -88,14 +88,32 @@
                 });
 
                 // 모달 창 보여주기
-                function showBoardModal(title, content) {
+                function showBoardModal(title, content,comment) {
                     let boardModal = document.getElementById('boardModal');
                     let modalTitle = document.getElementById('boardModalLabel');
                     let modalContent = document.getElementById('boardContent');
                     modalTitle.textContent = title;
                     modalContent.textContent = content;
+                    commentList(comment);
+                    debugger
                     $(boardModal).modal('show');
+                    //comment List 호출
                 }
+
+
+                //현재의 boardid의 댓글(comment) 리스트를 불러오기
+                function commentList(comment){
+                    debugger
+                    let commentList = "";
+
+                    for(let i = 0; i < comment.length; i++) {
+                        commentList += `<div class> <span> <b>${comment[i].content}</b></span>`;
+                    }
+                    boardComment.insertAdjacentHTML("beforeend", commentList);
+                }
+
+
+
 
                 // 댓글 창 클릭 이벤트 핸들러 및 댓글 엔터 키 이벤트 핸들러
                 commentBtn.addEventListener('click', saveComment);
