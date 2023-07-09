@@ -1,6 +1,6 @@
-package com.sujin.board.comment.repository;
+package com.sujin.board.board.repository;
 
-import com.sujin.board.comment.domain.Comment;
+import com.sujin.board.board.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

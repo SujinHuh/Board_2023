@@ -1,16 +1,15 @@
 package com.sujin.board.board.domain;
 
-import com.sujin.board.comment.domain.Comment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.NotFound;
 
 import java.util.List;
 
 
-@Entity(name = "Board")
-@Table(name = "board")
+@Entity
 @AllArgsConstructor // 자동으로 생성자
 @NoArgsConstructor // 아무것도 없는 생성자
 @Getter @Setter
@@ -28,7 +27,8 @@ public class Board {
     private String updateDate;
     private String deleteYn;
 
-    @OneToMany(mappedBy="board")
+    @JsonManagedReference
+    @OneToMany(mappedBy="board", fetch=FetchType.EAGER)
     private List<Comment> comment;
 
 }

@@ -1,11 +1,11 @@
-package com.sujin.board.comment.domain;
+package com.sujin.board.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sujin.board.board.domain.Board;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name = "Comment")
-@Table(name = "comment")
+@Entity
 @AllArgsConstructor // 자동으로 생성자
 @NoArgsConstructor
 @Getter @Setter
@@ -15,8 +15,9 @@ public class Comment {
 
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="board_id")
+    @JsonBackReference
     private Board board; // boardid연관
 
     @NonNull

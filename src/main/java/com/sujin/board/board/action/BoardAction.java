@@ -1,7 +1,9 @@
 package com.sujin.board.board.action;
 
 import com.sujin.board.board.domain.Board;
+import com.sujin.board.board.domain.Comment;
 import com.sujin.board.board.repository.BoardRepository;
+import com.sujin.board.board.repository.CommentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,16 +14,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@AllArgsConstructor//repository값 자동 할당
-
+@AllArgsConstructor //repository값 자동 할당  << 생성자를 자동으로 DI해주는거.
 public class BoardAction {
-    private final BoardRepository boardRepository;
-
     /***
      *
      get -> return string (page 이동)
      post -> return response (api 호출)
      */
+
+    private final BoardRepository boardRepository;
+
+    private final CommentRepository commentRepository;
 
     /********************************
      * 기능 : boardList
@@ -34,7 +37,6 @@ public class BoardAction {
         System.out.println(">>>>> " + boardLists);
         return "board/boardList";
     }
-
 
     /**
     *
@@ -72,21 +74,15 @@ public class BoardAction {
         return "/board/addBoard";
     }
 
-    // 모달창으로 boardView - 페이지 이동
-    @GetMapping("/board/view/{id}")
-    public String view() {
-        return "board/boardList";
-    }
-
     @PostMapping("/board/view/{id}")
     @ResponseBody
     public Board view(@PathVariable Long id ) {
         // null체크
-        Long board_id = id;
-        Optional<Board> boardList = boardRepository.findById(id);
+        System.out.println("id " + id);
+
         //  board부를때 commentList도 불려줘야함.
 
-        return boardList.orElse(null);
+        return boardRepository.findById(id).orElse(null);
     }
 
     // 페이지 번호에 따른 데이터를 가져오는 메소드 (가상의 데이터 생성)
@@ -107,6 +103,13 @@ public class BoardAction {
         }
 
         return boardLists;
+    }
+
+    @PostMapping("/addComment")
+    @ResponseBody
+    public Comment addComment(@RequestBody Comment comment){
+        commentRepository.save(comment);
+        return comment;
     }
 
 }
