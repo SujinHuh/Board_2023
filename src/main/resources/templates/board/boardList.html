@@ -6,7 +6,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-    <body>
+     <body>
     <hr>
     <h3>boardList</h3>
     <p></p>
@@ -107,7 +107,7 @@
                     let commentList = "";
 
                     for(let i = 0; i < comment.length; i++) {
-                        commentList += `<div class> <span> <b>${comment[i].content}</b></span>`;
+                        commentList += `<div class> <span> <b>${comment[i].content}</b></span></div>`;
                     }
                     boardComment.insertAdjacentHTML("beforeend", commentList);
                 }
