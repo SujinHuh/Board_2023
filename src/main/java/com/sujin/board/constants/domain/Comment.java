@@ -1,4 +1,4 @@
-package com.sujin.board.board.domain;
+package com.sujin.board.constants.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sujin.board.board.domain.Board;

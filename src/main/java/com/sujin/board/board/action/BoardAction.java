@@ -1,9 +1,9 @@
 package com.sujin.board.board.action;
 
 import com.sujin.board.board.domain.Board;
-import com.sujin.board.board.domain.Comment;
+import com.sujin.board.constants.domain.Comment;
 import com.sujin.board.board.repository.BoardRepository;
-import com.sujin.board.board.repository.CommentRepository;
+import com.sujin.board.constants.repository.CommentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor //repository값 자동 할당  << 생성자를 자동으로 DI해주는거.
