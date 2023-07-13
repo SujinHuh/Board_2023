@@ -27,6 +27,7 @@ public class Board {
     private String updateDate;
     private String deleteYn;
 
+    @OrderBy("id DESC")
     @JsonManagedReference
     @OneToMany(mappedBy="board", fetch=FetchType.EAGER)
     private List<Comment> comment;

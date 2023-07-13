@@ -15,7 +15,8 @@
     <hr>
     <ul >
         <h3 th:each="boardList : ${boardLists}">
-            <span id="boardArea" class="board-title" th:text="${boardList.title}" th:attr="data-id=${boardList.id}"></span>
+<!--            for문 돌때마다 boardArea라는게 생성됨 그러면 유니크하지않아 전혀 -->
+            <span  class="boardArea board-title" th:onclick="clickView([[${boardList.id}]])" th:text="${boardList.title}" th:attr="data-id=${boardList.id}"></span>
         </h3>
     </ul>
     <!-- Bootstrap Modal -->
@@ -35,11 +36,11 @@
                         </div>
                         <div class="col">
                             <h3>boardComment</h3>
-                            <div>
+                            <form id="boardCommentForm">
                                 <p id="boardComment"></p>
                                 <textarea id="comment" rows="3" cols="30" placeholder="댓글을 입력하세요"></textarea>
-                                <button id="commentBtn">등록</button>
-                            </div>
+                                <button type="submit" id="commentBtn">등록</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -47,113 +48,121 @@
         </div>
     </div>
 
-
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-            <script>
-                let boardArea = document.getElementById('boardArea');
-                let comment = document.getElementById('comment');
-                let commentBtn = document.getElementById('commentBtn');
-                let boardComment = document.getElementById('boardComment');
-                let currentBoardId ;
+    <script>
+        // let boardArea = document.getElementsByClassName('boardArea board-title');
+        let boardCommentForm = document.getElementById(`boardCommentForm`);
+        let comment = document.getElementById('comment');
+        let commentBtn = document.getElementById('commentBtn');
+        let boardComment = document.getElementById('boardComment');
+        let currentBoardId;
 
-                // 클릭 이벤트 리스너 등록
-                boardArea.addEventListener('click', function(event) {
+        // getElemetById는 리턴을 HTMLElement 해당 객체로 단일객체이기떄문에 addEventListener이 먹는다.
+        // 하지만 class 여러개에 이벤트를 걸어야할떈 HTMLCollectionOf 해당 객체 컬렉션으로 오기떄문에
+        // 후속처리가필요하다.
+        // 그렇다면 어제처럼 array와 단일객체간의 문제기떄문에 for문을 돌리는 일이 일어나야겠지..
+        // 아니면 애초에 onClick이벤트를 걸던지..
+        // 클릭 이벤트 리스너 등록
+        // boardArea.addEventListener('click', function(event) {
+        //
+        //     // axios 비동기 통신
+        //     // 0. 제목을 클릭
+        //     // 1. 제목의 id값을 찾기, contet조회하기.
+        //     let target = event.target;
+        //     currentBoardId = target.dataset.id;
+        //     console.log(currentBoardId)
+        //     axios.post(`/board/view/${currentBoardId}`)
+        //         .then((res) => {
+        //             console.log(res);
+        //           //  debugger
+        //
+        //             // 게시글정보는 res에있으니까
+        //             // 그걸 이제 모달에 넣어주면되겠지.
+        //            // debugger
+        //             showBoardModal(res.data.title,res.data.content,res.data.comment);
+        //         });
+        // });
 
-                    // axios 비동기 통신
-                    // 0. 제목을 클릭
-                    // 1. 제목의 id값을 찾기, contet조회하기.
-                    let target = event.target;
-                    currentBoardId = target.dataset.id;
-                    console.log(currentBoardId)
-                    axios.post(`/board/view/${currentBoardId}`)
-                        .then((res) => {
-                            console.log(res);
-                          //  debugger
+        //clickView -> 모달창 보이게
+        function clickView(id){
+            currentBoardId = id;
+            console.log(currentBoardId)
+            axios.post(`/board/view/${currentBoardId}`)
+                .then((res) => {
+                    console.log(res);
+                    //  debugger
 
-                            // 게시글정보는 res에있으니까
-                            // 그걸 이제 모달에 넣어주면되겠지.
-                           // debugger
-                            showBoardModal(res.data.title,res.data.content,res.data.comment);
-                        });
-                    // if (target.classList.contains('board-title')) {
-                    //     let title = target.textContent;
-                    //     // let content = target.textContent.textContent;
-                    //     console.log(">>>>>>>>>>>>>>")
-                    //     // console.log(title,content)
-                    //     let content = target.nextElementSibling.textContent;
-                    //     showBoardModal(title, content);
-                    // }
+                    // 게시글정보는 res에있으니까
+                    // 그걸 이제 모달에 넣어주면되겠지.
+                    // debugger
+                    showBoardModal(res.data.title,res.data.content,res.data.comment);
                 });
+        }
 
-                // 모달 창 보여주기
-                function showBoardModal(title, content,comment) {
-                    let boardModal = document.getElementById('boardModal');
-                    let modalTitle = document.getElementById('boardModalLabel');
-                    let modalContent = document.getElementById('boardContent');
-                    modalTitle.textContent = title;
-                    modalContent.textContent = content;
-                    boardComment.textContent = '';
-                    for(let i = 0; i < comment.length; i++) {
-                        commentList(comment[i]);
-                    }
-                   // debugger
-                    $(boardModal).modal('show');
-                    //comment List 호출
+        // 모달 창 보여주기
+        function showBoardModal(title, content,comment) {
+            let boardModal = document.getElementById('boardModal');
+            let modalTitle = document.getElementById('boardModalLabel');
+            let modalContent = document.getElementById('boardContent');
+            modalTitle.textContent = title;
+            modalContent.textContent = content;
+            boardComment.textContent = '';
+            for(let i = 0; i < comment.length; i++) {
+                commentList(comment[i]);
+            }
+            $(boardModal).modal('show');
+        }
+
+    //현재의 boardid의 댓글(comment) 리스트를 불러오기
+    function commentList(comment){  //변수가들어가
+        // 공백으로실행해서 comment가 undefined로 에러발생.
+        let comments = `<div class> <span> <b>${comment.content}</b></span></div>`;
+        boardComment.insertAdjacentHTML("afterbegin", comments);
+    }
+
+    // 댓글 창 클릭 이벤트 핸들러 및 댓글 엔터 키 이벤트 핸들러
+    // form 활용해서 이벤트 합칠수있음.
+    boardCommentForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        saveComment();
+    });
+    // commentBtn.addEventListener('click', saveComment);
+    // document.addEventListener("keydown", function(event) {
+    //     if (event.keyCode === 13) {
+    //         saveComment();
+    //     }
+    // });
+
+    function saveComment(){
+        let param = {content: comment.value, board : {id : currentBoardId}}// 객체
+        console.log("param>>>>" + param);
+        axios.post("/addComment",param)
+            .then(function (res){
+                if(res != null ) {
+                    console.log("res >>> " + res);
+                    console.log(res.data);
+                    console.log(res.data.content);
+
+                    alert("success");
+                    // location.href = window.location.href; // 현재 페이지의 URL로 이동
+
+                    // 이거일단주석
+                   // boardComment.textContent = param.content ;
+                    comment.value = '';
+                    // 이렇게 할경우 comment는 document.getElementById(어쩌구 저쩌구 객체
+                    // 위에서처럼 res.data.comment 이런걸 넣어야되니까 이거겠지? 진짜 복붙을할거면 똑바로하고 이게왜인지
+                    // 이해를하고 해야지 ㅡㅡ 뭐 공부할맛도안나게무한반복이야
+                    commentList(res.data);
+                    console.log(res);
                 }
+            });
+    }
+    </script>
 
-
-                //현재의 boardid의 댓글(comment) 리스트를 불러오기
-                function commentList(comment){  //변수가들어가
-
-                    // 공백으로실행해서 comment가 undefined로 에러발생.
-                    let commentList = `<div class> <span> <b>${comment.content}</b></span></div>`;
-                    boardComment.insertAdjacentHTML("afterend", commentList);
-                }
-
-
-
-
-                // 댓글 창 클릭 이벤트 핸들러 및 댓글 엔터 키 이벤트 핸들러
-                commentBtn.addEventListener('click', saveComment);
-                document.addEventListener("keydown", function(event) {
-                    if (event.keyCode === 13) {
-                        saveComment();
-                        // commentList() // 공백으로 실행 하니까
-                    }
-                });
-
-
-                function saveComment(){
-                    let param = {content: comment.value, board : {id : currentBoardId}}// 객체
-                    console.log("param>>>>" + param);
-                    axios.post("/addComment",param)
-                        .then(function (res){
-                            if(res != null ) {
-                                console.log("res >>> " + res);
-                                console.log(res.data);
-                                console.log(res.data.content);
-
-                                alert("success");
-                                // location.href = window.location.href; // 현재 페이지의 URL로 이동
-
-                                // 이거일단주석
-                               // boardComment.textContent = param.content ;
-                                comment.value = '';
-                                // 이렇게 할경우 comment는 document.getElementById(어쩌구 저쩌구 객체
-                                // 위에서처럼 res.data.comment 이런걸 넣어야되니까 이거겠지? 진짜 복붙을할거면 똑바로하고 이게왜인지
-                                // 이해를하고 해야지 ㅡㅡ 뭐 공부할맛도안나게무한반복이야
-                                commentList(res.data);
-                                console.log(res);
-                            }
-                        });
-                }
-
-
-            </script>
     </body>
 </html>
 
