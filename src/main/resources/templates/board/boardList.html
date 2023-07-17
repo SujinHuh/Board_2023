@@ -14,7 +14,7 @@
     <p></p><p></p>
     <hr>
     <ul >
-        <h3 th:each="boardList : ${boardLists}">
+        <h3 th:each="boardList : ${boardLists}" style="height: 1000px; margin-top: 500px;">
 <!--            for문 돌때마다 boardArea라는게 생성됨 그러면 유니크하지않아 전혀 -->
             <span  class="boardArea board-title" th:onclick="clickView([[${boardList.id}]])" th:text="${boardList.title}" th:attr="data-id=${boardList.id}"></span>
         </h3>
@@ -38,7 +38,7 @@
                             <h3>boardComment</h3>
                             <form id="boardCommentForm">
                                 <p id="boardComment"></p>
-                                <textarea id="comment" rows="3" cols="30" placeholder="댓글을 입력하세요"></textarea>
+                                <input type="text" id="comment" placeholder="댓글을 입력하세요"></input>
                                 <button type="submit" id="commentBtn">등록</button>
                             </form>
                         </div>
