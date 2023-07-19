@@ -13,7 +13,7 @@
     <button style="float: right;" onclick="location.href='/addBoard'">AddBoard</button >
     <p></p><p></p>
     <hr>
-    <ul >
+    <ul id="boardArea">
         <h3 th:each="boardList : ${boardLists}" style="height: 1000px; margin-top: 500px;">
 <!--            for문 돌때마다 boardArea라는게 생성됨 그러면 유니크하지않아 전혀 -->
             <span  class="boardArea board-title" th:onclick="clickView([[${boardList.id}]])" th:text="${boardList.title}" th:attr="data-id=${boardList.id}"></span>
@@ -54,12 +54,84 @@
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // let boardArea = document.getElementsByClassName('boardArea board-title');
+        let boardArea = document.getElementsByClassName('boardArea');
         let boardCommentForm = document.getElementById(`boardCommentForm`);
         let comment = document.getElementById('comment');
         let commentBtn = document.getElementById('commentBtn');
         let boardComment = document.getElementById('boardComment');
         let currentBoardId;
+
+
+
+        const log = console.log;
+
+
+        const getPhotos = page => {
+            const url = `https://jsonplaceholder.typicode.com/boardAreas?_page=${page}&_limit=10`;
+            return fetch(url).then(response=>response.json());
+        }
+
+        const mapPhotos = boardAreas => {
+            return boardAreas.map(boardArea=>{
+                return {url: boardArea.thumbnailUrl}
+            })
+        }
+
+        const createImgElement = boardArea => {
+            const img = document.createElement("img");
+            img.src = boardArea.url;
+            return img;
+        }
+
+        const createPhotoElements = boardAreas => {
+            return boardAreas.map(createImgElement);
+        }
+
+        const appendPhotoElements = (boardAreaElements, el) => {
+            return el?.append(...boardAreaElements)
+        }
+
+        const pipe = (...fns) => (arg) =>
+            fns.reduce((result, fn)=> (fn instanceof Function ? result.then(fn):result),
+                Promise.resolve(arg)
+            );
+
+        const $ = el => document.querySelector(el);
+
+        const processPhotos = pipe(
+            getPhotos,
+            mapPhotos,
+            createPhotoElements,
+            (boardAreaElements) => appendPhotoElements(boardAreaElements, $("#boardAreas"))
+        )
+
+
+        const getNextPhotos = (()=>{
+            let page = 1;
+            let isFetching = false;
+            return () => {
+                if(!isFetching){
+                    isFetching = true;
+                    const nextPage = ++page;
+                    processPhotos(nextPage).then(()=>{
+                        isFetching = false;
+                    })
+                }
+            }
+        })();
+
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', ()=>{
+            const scrollPos = window.innerHeight + window.scrollY;
+            const bodyHeight = document.body.offsetHeight;
+
+            if(scrollPos >= bodyHeight){
+                getNextPhotos();
+            }
+        })
+        processPhotos(1);
+
+
 
         // getElemetById는 리턴을 HTMLElement 해당 객체로 단일객체이기떄문에 addEventListener이 먹는다.
         // 하지만 class 여러개에 이벤트를 걸어야할떈 HTMLCollectionOf 해당 객체 컬렉션으로 오기떄문에

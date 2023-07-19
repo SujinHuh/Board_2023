@@ -1,55 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <h1>List</h1>
-    <hr>
-</head>
-<body>
-<ul id="boardArea">
-    <h3 th:each="boardList : ${boardLists}">
-        <span th:text="${boardList.title}"></span>
-        <span th:text="${boardList.content}"></span>
-    </h3>
-</ul>
-
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    let boardArea = document.getElementById('boardArea');
-    let page = 1;
-    let isLoading = false;
-
-    // 스크롤 이벤트 리스너 등록
-    window.addEventListener('scroll', function() {
-        if (isLoading) return;
-        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        let windowHeight = window.innerHeight;
-        let documentHeight = document.documentElement.scrollHeight;
-        if (scrollTop + windowHeight >= documentHeight - 100) {
-            loadMoreData();
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>infinite scroll</title>
+    <style>
+        #container {
+            max-width: 470px;
+            margin-left: auto;
+            margin-right: auto;
         }
-    });
 
-    // 데이터 추가 로드
-    function loadMoreData() {
-        isLoading = true;
-        axios.get('/loadMore?page=' + page)
-            .then(function(response) {
-                let boardLists = response.data.boardLists;
-                if (boardLists.length > 0) {
-                    boardLists.forEach(function(board) {
-                        let tag = `<h3><span>${board.title}</span><span>${board.content}</span></h3>`;
-                        boardArea.insertAdjacentHTML('beforeend', tag);
-                    });
-                    page++;
-                }
-                isLoading = false;
-            })
-            .catch(function(error) {
-                console.log(error);
-                isLoading = false;
-            });
+        #photos {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        img {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            flex-basis: 100%;
+            flex: 1;
+            margin: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container">
+    <div id="photos"></div>
+</div>
+<script>
+    const log = console.log;
+
+
+    const getPhotos = page => {
+        const url = `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=10`;
+        return fetch(url).then(response=>response.json());
     }
+
+    const mapPhotos = photos => {
+        return photos.map(photo=>{
+            return {url: photo.thumbnailUrl}
+        })
+    }
+
+    const createImgElement = photo => {
+        const img = document.createElement("img");
+        img.src = photo.url;
+        return img;
+    }
+
+    const createPhotoElements = photos => {
+        return photos.map(createImgElement);
+    }
+
+    const appendPhotoElements = (photoElements, el) => {
+        return el?.append(...photoElements)
+    }
+
+    const pipe = (...fns) => (arg) =>
+        fns.reduce((result, fn)=> (fn instanceof Function ? result.then(fn):result),
+            Promise.resolve(arg)
+        );
+
+    const $ = el => document.querySelector(el);
+
+    const processPhotos = pipe(
+        getPhotos,
+        mapPhotos,
+        createPhotoElements,
+        (photoElements) => appendPhotoElements(photoElements, $("#photos"))
+    )
+
+    const getNextPhotos = (()=>{
+        let page = 1;
+        let isFetching = false;
+        return () => {
+            if(!isFetching){
+                isFetching = true;
+                const nextPage = ++page;
+                processPhotos(nextPage).then(()=>{
+                    isFetching = false;
+                })
+            }
+        }
+    })();
+
+    window.addEventListener("scroll", ()=>{
+        const scrollPos = window.innerHeight + window.scrollY;
+        const bodyHeight = document.body.offsetHeight;
+
+        if(scrollPos >= bodyHeight){
+            getNextPhotos();
+        }
+    })
+
+    processPhotos(1);
 </script>
 </body>
 </html>
