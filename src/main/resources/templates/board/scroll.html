@@ -36,49 +36,49 @@
 <script>
     const log = console.log;
 
-
+//사진을 받아옴.
     const getPhotos = page => {
         const url = `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=10`;
         return fetch(url).then(response=>response.json());
     }
-
+//"맴핑을 해줌"getphotos에서 return 받은 것을 반환
     const mapPhotos = photos => {
         return photos.map(photo=>{
             return {url: photo.thumbnailUrl}
         })
     }
-
+//img 태그
     const createImgElement = photo => {
         const img = document.createElement("img");
         img.src = photo.url;
         return img;
     }
-
+//모든 img 태그를 적용시켜준다.
     const createPhotoElements = photos => {
         return photos.map(createImgElement);
     }
-
+//img 화면에 뿌려주는
     const appendPhotoElements = (photoElements, el) => {
         return el?.append(...photoElements)
     }
 
     const pipe = (...fns) => (arg) =>
-        fns.reduce((result, fn)=> (fn instanceof Function ? result.then(fn):result),
+        fns.reduce((result, fn)=> (fn instanceof Function ? result.then(fn):result), //Promise 함수일 경우 then콜백을 해서 사용하는 것
             Promise.resolve(arg)
         );
 
     const $ = el => document.querySelector(el);
 
     const processPhotos = pipe(
-        getPhotos,
-        mapPhotos,
-        createPhotoElements,
+        getPhotos, //에이피아이 받아오고
+        mapPhotos, //변형시키고
+        createPhotoElements, //각각의 이미지를 만들어주고
         (photoElements) => appendPhotoElements(photoElements, $("#photos"))
     )
-
+// 스크롤 내려가면 닿을 시점에 다음페이지의 화면을 호출
     const getNextPhotos = (()=>{
         let page = 1;
-        let isFetching = false;
+        let isFetching = false; //페칭중이 아닌 경오 호출 "중복 방지"
         return () => {
             if(!isFetching){
                 isFetching = true;
@@ -90,16 +90,17 @@
         }
     })();
 
+    //scroll 이벤트
     window.addEventListener("scroll", ()=>{
-        const scrollPos = window.innerHeight + window.scrollY;
+        const scrollPos = window.innerHeight + window.scrollY; //스크롤 포지션이랑 바디 높이
         const bodyHeight = document.body.offsetHeight;
-
+//스크롤을 내려가면서 닿을 시점에 다음페이지의 화면 호출
         if(scrollPos >= bodyHeight){
             getNextPhotos();
         }
     })
 
-    processPhotos(1);
+    processPhotos(1); //첫 페이지 로드 바로 직접 입력
 </script>
 </body>
 </html>

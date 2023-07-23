@@ -15,7 +15,7 @@ public class Comment {
 
     private Long id;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="board_id")
     @JsonBackReference
     private Board board; // boardid연관
