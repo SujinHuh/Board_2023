@@ -1,10 +1,16 @@
 package com.sujin.board.board.action;
 
 import com.sujin.board.board.domain.Board;
+import com.sujin.board.board.service.BoardService;
 import com.sujin.board.constants.domain.Comment;
 import com.sujin.board.board.repository.BoardRepository;
 import com.sujin.board.constants.repository.CommentRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Slf4j
 @Controller
 @AllArgsConstructor //repository값 자동 할당  << 생성자를 자동으로 DI해주는거.
 public class BoardAction {
@@ -22,6 +30,7 @@ public class BoardAction {
      */
 
     private final BoardRepository boardRepository;
+    private final BoardService boardService;
 
     private final CommentRepository commentRepository;
 
@@ -30,32 +39,24 @@ public class BoardAction {
      * @return
      **********************************/
     @GetMapping("/boardList")
-    public String boardList(Model model) {
-        List<Board> boardLists = boardRepository.findAll();
-        model.addAttribute("boardLists", boardLists);
-        System.out.println(">>>>> " + boardLists);
+    public String boardList(Model model){
+        int page = 0;
+        // paging
+        //List<Board> boardLists = boardRepository.findAll();
+        //model.addAttribute("boardLists", boardLists);
+        model.addAttribute("boardLists",boardService.pageList(page));
+        log.info("posts>>>> " + model);
+        //System.out.println(">>>>> " + boardLists);
         return "board/boardList";
     }
 
-    /**
-    *
-    * BoardAction
-    *
-    * @author sujin
-    * @version 1.0.0
-    * @dtae 2023-06-27
-    *
-    **/
-    @GetMapping("/loadMore")
-    public String pageLoad(@RequestParam("page") int page, Model model) {
-        // 해당 페이지 번호에 해당하는 데이터를 가져와서 boardLists에 담는다.
-        List<Board> boardLists = getBoardListsByPage(page); // 페이지에 따른 데이터를 가져오는 로직을 구현해야 함
-
-        // 모델에 boardLists를 담아서 템플릿으로 전달
-        model.addAttribute("boardLists", boardLists);
-
-        return "board/boardList";
+    //post 페이징
+    @PostMapping("/boardList")
+    @ResponseBody
+    public Page<Board> boardList(@RequestParam int page){
+        return boardService.pageList(page);
     }
+
 
     // @ResponseBody - ResourceEntity
     @PostMapping("/addBoard")

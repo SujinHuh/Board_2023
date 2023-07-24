@@ -1,55 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <h1>List</h1>
-    <hr>
-</head>
-<body>
-<ul id="boardArea">
-    <h3 th:each="boardList : ${boardLists}">
-        <span th:text="${boardList.title}"></span>
-        <span th:text="${boardList.content}"></span>
-    </h3>
-</ul>
-
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    let boardArea = document.getElementById('boardArea');
-    let page = 1;
-    let isLoading = false;
-
-    // 스크롤 이벤트 리스너 등록
-    window.addEventListener('scroll', function() {
-        if (isLoading) return;
-        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        let windowHeight = window.innerHeight;
-        let documentHeight = document.documentElement.scrollHeight;
-        if (scrollTop + windowHeight >= documentHeight - 100) {
-            loadMoreData();
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>infinite scroll</title>
+    <style>
+        #container {
+            max-width: 470px;
+            margin-left: auto;
+            margin-right: auto;
         }
-    });
 
-    // 데이터 추가 로드
-    function loadMoreData() {
-        isLoading = true;
-        axios.get('/loadMore?page=' + page)
-            .then(function(response) {
-                let boardLists = response.data.boardLists;
-                if (boardLists.length > 0) {
-                    boardLists.forEach(function(board) {
-                        let tag = `<h3><span>${board.title}</span><span>${board.content}</span></h3>`;
-                        boardArea.insertAdjacentHTML('beforeend', tag);
-                    });
-                    page++;
-                }
-                isLoading = false;
-            })
-            .catch(function(error) {
-                console.log(error);
-                isLoading = false;
-            });
+        #photos {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        img {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            flex-basis: 100%;
+            flex: 1;
+            margin: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container">
+    <div id="photos"></div>
+</div>
+<script>
+    const log = console.log;
+
+//사진을 받아옴.
+    const getPhotos = page => {
+        const url = `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=10`;
+        return fetch(url).then(response=>response.json());
     }
+//"맴핑을 해줌"getphotos에서 return 받은 것을 반환
+    const mapPhotos = photos => {
+        return photos.map(photo=>{
+            return {url: photo.thumbnailUrl}
+        })
+    }
+//img 태그
+    const createImgElement = photo => {
+        const img = document.createElement("img");
+        img.src = photo.url;
+        return img;
+    }
+//모든 img 태그를 적용시켜준다.
+    const createPhotoElements = photos => {
+        return photos.map(createImgElement);
+    }
+//img 화면에 뿌려주는
+    const appendPhotoElements = (photoElements, el) => {
+        return el?.append(...photoElements)
+    }
+
+    const pipe = (...fns) => (arg) =>
+        fns.reduce((result, fn)=> (fn instanceof Function ? result.then(fn):result), //Promise 함수일 경우 then콜백을 해서 사용하는 것
+            Promise.resolve(arg)
+        );
+
+    const $ = el => document.querySelector(el);
+
+    const processPhotos = pipe(
+        getPhotos, //에이피아이 받아오고
+        mapPhotos, //변형시키고
+        createPhotoElements, //각각의 이미지를 만들어주고
+        (photoElements) => appendPhotoElements(photoElements, $("#photos"))
+    )
+// 스크롤 내려가면 닿을 시점에 다음페이지의 화면을 호출
+    const getNextPhotos = (()=>{
+        let page = 1;
+        let isFetching = false; //페칭중이 아닌 경오 호출 "중복 방지"
+        return () => {
+            if(!isFetching){
+                isFetching = true;
+                const nextPage = ++page;
+                processPhotos(nextPage).then(()=>{
+                    isFetching = false;
+                })
+            }
+        }
+    })();
+
+    //scroll 이벤트
+    window.addEventListener("scroll", ()=>{
+        const scrollPos = window.innerHeight + window.scrollY; //스크롤 포지션이랑 바디 높이
+        const bodyHeight = document.body.offsetHeight;
+//스크롤을 내려가면서 닿을 시점에 다음페이지의 화면 호출
+        if(scrollPos >= bodyHeight){
+            getNextPhotos();
+        }
+    })
+
+    processPhotos(1); //첫 페이지 로드 바로 직접 입력
 </script>
 </body>
 </html>

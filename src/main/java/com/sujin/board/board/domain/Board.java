@@ -29,7 +29,7 @@ public class Board {
 
     @OrderBy("id DESC")
     @JsonManagedReference
-    @OneToMany(mappedBy="board", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="board", fetch=FetchType.LAZY)
     private List<Comment> comment;
 
 }
