@@ -1,7 +1,7 @@
-package com.sujin.board.constants.domain;
+package com.sujin.Application.constants.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.sujin.board.board.domain.Board;
+import com.sujin.Application.board.domain.Board;
 import jakarta.persistence.*;
 import lombok.*;
 

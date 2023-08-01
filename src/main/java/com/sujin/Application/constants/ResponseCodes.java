@@ -1,4 +1,4 @@
-package com.sujin.board.constants;
+package com.sujin.Application.constants;
 
 public enum ResponseCodes {
     SUCCESS( "0000", "성공"),

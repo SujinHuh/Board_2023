@@ -1,7 +1,6 @@
-package com.sujin.board.constants;
+package com.sujin.Application.constants;
 
 import lombok.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 @Setter

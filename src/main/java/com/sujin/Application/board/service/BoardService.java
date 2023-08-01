@@ -1,11 +1,10 @@
-package com.sujin.board.board.service;
+package com.sujin.Application.board.service;
 
-import com.sujin.board.board.domain.Board;
-import com.sujin.board.board.repository.BoardRepository;
+import com.sujin.Application.board.domain.Board;
+import com.sujin.Application.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

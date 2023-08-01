@@ -1,10 +1,8 @@
-package com.sujin.board.board.repository;
+package com.sujin.Application.board.repository;
 
-import com.sujin.board.board.domain.Board;
-import org.springframework.data.domain.Pageable;
+import com.sujin.Application.board.domain.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

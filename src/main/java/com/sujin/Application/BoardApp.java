@@ -1,4 +1,4 @@
-package com.sujin.board;
+package com.sujin.Application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

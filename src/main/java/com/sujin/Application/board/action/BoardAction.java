@@ -1,16 +1,13 @@
-package com.sujin.board.board.action;
+package com.sujin.Application.board.action;
 
-import com.sujin.board.board.domain.Board;
-import com.sujin.board.board.service.BoardService;
-import com.sujin.board.constants.domain.Comment;
-import com.sujin.board.board.repository.BoardRepository;
-import com.sujin.board.constants.repository.CommentRepository;
+import com.sujin.Application.board.service.BoardService;
+import com.sujin.Application.constants.domain.Comment;
+import com.sujin.Application.constants.repository.CommentRepository;
+import com.sujin.Application.board.domain.Board;
+import com.sujin.Application.board.repository.BoardRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

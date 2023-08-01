@@ -1,4 +1,4 @@
-package com.sujin.board.payment.action;
+package com.sujin.Application.payment.action;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
